@@ -80,6 +80,8 @@ func main() {
 	svc := article.NewService(articleRepo, authorRepo)
 	rest.NewArticleHandler(e, svc)
 
+	rest.NewPdfHandler(e)
+
 	// Start Server
 	address := os.Getenv("SERVER_ADDRESS")
 	if address == "" {
