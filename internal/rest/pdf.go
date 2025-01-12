@@ -1,25 +1,32 @@
 package rest
 
 import (
+	"bytes"
+	"context"
+	"io"
+	"mime/multipart"
 	"net/http"
-	"os"
-	"path/filepath"
 
+	"github.com/bxcodec/go-clean-arch/domain"
 	"github.com/labstack/echo/v4"
-	"github.com/pdfcpu/pdfcpu/pkg/api"
-	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-type PdfHandler struct {
-	Service ArticleService
+type PdfService interface {
+	CompressPdf(ctx context.Context, fileName string, file multipart.File) (domain.PdfFile, error)
 }
 
-func NewPdfHandler(e *echo.Echo) {
-	handler := &ArticleHandler{}
+type PdfHandler struct {
+	Service PdfService
+}
+
+func NewPdfHandler(e *echo.Echo, svc PdfService) {
+	handler := &PdfHandler{
+		Service: svc,
+	}
 	e.POST("/process/compress", handler.StartCompress)
 }
 
-func (a *ArticleHandler) StartCompress(c echo.Context) error {
+func (a *PdfHandler) StartCompress(c echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, ResponseError{Message: "Failed to get the file"})
@@ -31,21 +38,28 @@ func (a *ArticleHandler) StartCompress(c echo.Context) error {
 	}
 	defer src.Close()
 
-	tempDir := os.TempDir()
-	dstPath := filepath.Join(tempDir, file.Filename)
-	dst, err := os.Create(dstPath)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to save file")
+	mimeType, _ := getMimeType(src)
+	if mimeType != "application/pdf" {
+		return c.JSON(http.StatusBadRequest, ResponseError{Message: "File type invalid"})
 	}
-	defer dst.Close()
 
-	err = api.Optimize(src, dst, &model.Configuration{DecodeAllStreams: true})
+	ctx := c.Request().Context()
+	compressPdfFile, err := a.Service.CompressPdf(ctx, file.Filename, src)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, ResponseError{Message: "PDF optimization failed: " + err.Error()})
+		return c.JSON(http.StatusInternalServerError, ResponseError{Message: "Failed to compress pdf"})
 	}
 
 	c.Response().Header().Set(echo.HeaderContentType, "application/pdf")
-	c.Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename=compress.pdf")
+	c.Response().Header().Set(echo.HeaderContentDisposition, "attachment; filename="+compressPdfFile.Name)
+	reader := bytes.NewReader(compressPdfFile.Content)
+	return c.Stream(http.StatusOK, "application/pdf", reader)
+}
 
-	return c.Stream(http.StatusOK, "application/pdf", src)
+func getMimeType(file io.Reader) (string, error) {
+	buf := make([]byte, 512)
+	_, err := file.Read(buf)
+	if err != nil {
+		return "", err
+	}
+	return http.DetectContentType(buf), nil
 }

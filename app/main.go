@@ -12,7 +12,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
 
+	"github.com/bxcodec/go-clean-arch/internal/repository"
 	mysqlRepo "github.com/bxcodec/go-clean-arch/internal/repository/mysql"
+	"github.com/bxcodec/go-clean-arch/pdf"
 
 	"github.com/bxcodec/go-clean-arch/article"
 	"github.com/bxcodec/go-clean-arch/internal/rest"
@@ -76,11 +78,15 @@ func main() {
 	authorRepo := mysqlRepo.NewAuthorRepository(dbConn)
 	articleRepo := mysqlRepo.NewArticleRepository(dbConn)
 
+	pdfApi := &repository.PdfCpuApiImpl{}
+	pdfRepo := repository.NewPdfRepository(pdfApi)
+
 	// Build service Layer
 	svc := article.NewService(articleRepo, authorRepo)
 	rest.NewArticleHandler(e, svc)
 
-	rest.NewPdfHandler(e)
+	pdfSvc := pdf.NewService(pdfRepo)
+	rest.NewPdfHandler(e, pdfSvc)
 
 	// Start Server
 	address := os.Getenv("SERVER_ADDRESS")
