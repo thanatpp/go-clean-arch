@@ -11,12 +11,14 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/bxcodec/go-clean-arch/internal/repository"
 	mysqlRepo "github.com/bxcodec/go-clean-arch/internal/repository/mysql"
 	"github.com/bxcodec/go-clean-arch/pdf"
 
 	"github.com/bxcodec/go-clean-arch/article"
+	_ "github.com/bxcodec/go-clean-arch/docs"
 	"github.com/bxcodec/go-clean-arch/internal/rest"
 	"github.com/bxcodec/go-clean-arch/internal/rest/middleware"
 	"github.com/joho/godotenv"
@@ -34,6 +36,11 @@ func init() {
 	}
 }
 
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server for using Swagger with Echo.
+// @host localhost:9090
+// @BasePath /
 func main() {
 	//prepare database
 	dbHost := os.Getenv("DATABASE_HOST")
@@ -87,6 +94,9 @@ func main() {
 
 	pdfSvc := pdf.NewService(pdfRepo)
 	rest.NewPdfHandler(e, pdfSvc)
+
+	// Swagger
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Start Server
 	address := os.Getenv("SERVER_ADDRESS")

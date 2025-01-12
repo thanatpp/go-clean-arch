@@ -26,6 +26,15 @@ func NewPdfHandler(e *echo.Echo, svc PdfService) {
 	e.POST("/process/compress", handler.StartCompress)
 }
 
+// @Summary Compress a PDF file
+// @Description This API compresses the provided PDF file and returns the compressed version.
+// @Tags PDF
+// @Accept multipart/form-data
+// @Param file formData file true "PDF file"
+// @Success 200 {file} string "Compressed PDF file"
+// @Failure 400 {object} ResponseError "File type is invalid"
+// @Failure 500 {object} ResponseError "Failed to compress PDF"
+// @Router /process/compress [post]
 func (a *PdfHandler) StartCompress(c echo.Context) error {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -38,11 +47,18 @@ func (a *PdfHandler) StartCompress(c echo.Context) error {
 	}
 	defer src.Close()
 
-	mimeType, _ := getMimeType(src)
+	var buffer bytes.Buffer
+	_, err = io.Copy(&buffer, src)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, ResponseError{Message: "Failed to copy file content"})
+	}
+
+	mimeType, _ := getMimeType(&buffer)
 	if mimeType != "application/pdf" {
 		return c.JSON(http.StatusBadRequest, ResponseError{Message: "File type invalid"})
 	}
 
+	src.Seek(0, io.SeekStart)
 	ctx := c.Request().Context()
 	compressPdfFile, err := a.Service.CompressPdf(ctx, file.Filename, src)
 	if err != nil {
