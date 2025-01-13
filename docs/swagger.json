@@ -49,6 +49,76 @@
                     }
                 }
             }
+        },
+        "/process/split": {
+            "post": {
+                "description": "This API splits the provided PDF file based on the specified split mode and range",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/pdf",
+                    " application/zip"
+                ],
+                "tags": [
+                    "PDF"
+                ],
+                "summary": "Split a PDF file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "PDF file to be split",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Split mode (e.g., 'ranges', 'fixed_range', 'remove_pages')",
+                        "name": "split_mode",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page ranges when split_mode = 'ranges' (e.g., '1','5','1-5')",
+                        "name": "ranges",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Remove pages when split_mode = 'remove_pages' (e.g., '1','5','1-5')",
+                        "name": "remove_page",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Fixed range when split_mode = fixed_range (e.g., '2', '1')",
+                        "name": "fixed_range",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Split PDF file",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input or file type",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to split PDF",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponseError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

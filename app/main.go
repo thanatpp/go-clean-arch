@@ -9,10 +9,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
+	"github.com/bxcodec/go-clean-arch/internal/helper"
 	"github.com/bxcodec/go-clean-arch/internal/repository"
 	mysqlRepo "github.com/bxcodec/go-clean-arch/internal/repository/mysql"
 	"github.com/bxcodec/go-clean-arch/pdf"
@@ -71,6 +73,10 @@ func main() {
 	// prepare echo
 
 	e := echo.New()
+
+	v := validator.New()
+	e.Validator = &helper.CustomValidator{Validator: v}
+
 	e.Use(middleware.CORS)
 	timeoutStr := os.Getenv("CONTEXT_TIMEOUT")
 	timeout, err := strconv.Atoi(timeoutStr)
@@ -86,7 +92,8 @@ func main() {
 	articleRepo := mysqlRepo.NewArticleRepository(dbConn)
 
 	pdfApi := &repository.PdfCpuApiImpl{}
-	pdfRepo := repository.NewPdfRepository(pdfApi)
+	fileHelper := &repository.FileHelperImpl{}
+	pdfRepo := repository.NewPdfRepository(pdfApi, fileHelper)
 
 	// Build service Layer
 	svc := article.NewService(articleRepo, authorRepo)

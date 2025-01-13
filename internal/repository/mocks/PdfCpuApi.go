@@ -14,6 +14,24 @@ type PdfCpuApi struct {
 	mock.Mock
 }
 
+// MergeCreateFile provides a mock function with given fields: inFiles, outFile, dividerPage, conf
+func (_m *PdfCpuApi) MergeCreateFile(inFiles []string, outFile string, dividerPage bool, conf *model.Configuration) error {
+	ret := _m.Called(inFiles, outFile, dividerPage, conf)
+
+	if len(ret) == 0 {
+		panic("no return value specified for MergeCreateFile")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func([]string, string, bool, *model.Configuration) error); ok {
+		r0 = rf(inFiles, outFile, dividerPage, conf)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Optimize provides a mock function with given fields: rs, w, conf
 func (_m *PdfCpuApi) Optimize(rs io.ReadSeeker, w io.Writer, conf *model.Configuration) error {
 	ret := _m.Called(rs, w, conf)
@@ -25,6 +43,70 @@ func (_m *PdfCpuApi) Optimize(rs io.ReadSeeker, w io.Writer, conf *model.Configu
 	var r0 error
 	if rf, ok := ret.Get(0).(func(io.ReadSeeker, io.Writer, *model.Configuration) error); ok {
 		r0 = rf(rs, w, conf)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// PageCount provides a mock function with given fields: rs, conf
+func (_m *PdfCpuApi) PageCount(rs io.ReadSeeker, conf *model.Configuration) (int, error) {
+	ret := _m.Called(rs, conf)
+
+	if len(ret) == 0 {
+		panic("no return value specified for PageCount")
+	}
+
+	var r0 int
+	var r1 error
+	if rf, ok := ret.Get(0).(func(io.ReadSeeker, *model.Configuration) (int, error)); ok {
+		return rf(rs, conf)
+	}
+	if rf, ok := ret.Get(0).(func(io.ReadSeeker, *model.Configuration) int); ok {
+		r0 = rf(rs, conf)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	if rf, ok := ret.Get(1).(func(io.ReadSeeker, *model.Configuration) error); ok {
+		r1 = rf(rs, conf)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Split provides a mock function with given fields: rs, outDir, fileName, span, conf
+func (_m *PdfCpuApi) Split(rs io.ReadSeeker, outDir string, fileName string, span int, conf *model.Configuration) error {
+	ret := _m.Called(rs, outDir, fileName, span, conf)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Split")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(io.ReadSeeker, string, string, int, *model.Configuration) error); ok {
+		r0 = rf(rs, outDir, fileName, span, conf)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SplitByPageNr provides a mock function with given fields: rs, outDir, fileName, pageNrs, conf
+func (_m *PdfCpuApi) SplitByPageNr(rs io.ReadSeeker, outDir string, fileName string, pageNrs []int, conf *model.Configuration) error {
+	ret := _m.Called(rs, outDir, fileName, pageNrs, conf)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SplitByPageNr")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(io.ReadSeeker, string, string, []int, *model.Configuration) error); ok {
+		r0 = rf(rs, outDir, fileName, pageNrs, conf)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -43,6 +43,64 @@ func (_m *PdfRepository) Compress(file multipart.File) ([]byte, error) {
 	return r0, r1
 }
 
+// PageCount provides a mock function with given fields: file
+func (_m *PdfRepository) PageCount(file multipart.File) (int, error) {
+	ret := _m.Called(file)
+
+	if len(ret) == 0 {
+		panic("no return value specified for PageCount")
+	}
+
+	var r0 int
+	var r1 error
+	if rf, ok := ret.Get(0).(func(multipart.File) (int, error)); ok {
+		return rf(file)
+	}
+	if rf, ok := ret.Get(0).(func(multipart.File) int); ok {
+		r0 = rf(file)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	if rf, ok := ret.Get(1).(func(multipart.File) error); ok {
+		r1 = rf(file)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Split provides a mock function with given fields: file, pages
+func (_m *PdfRepository) Split(file multipart.File, pages []int) ([]byte, error) {
+	ret := _m.Called(file, pages)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Split")
+	}
+
+	var r0 []byte
+	var r1 error
+	if rf, ok := ret.Get(0).(func(multipart.File, []int) ([]byte, error)); ok {
+		return rf(file, pages)
+	}
+	if rf, ok := ret.Get(0).(func(multipart.File, []int) []byte); ok {
+		r0 = rf(file, pages)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]byte)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(multipart.File, []int) error); ok {
+		r1 = rf(file, pages)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // NewPdfRepository creates a new instance of PdfRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewPdfRepository(t interface {

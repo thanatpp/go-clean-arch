@@ -40,4 +40,52 @@ paths:
       summary: Compress a PDF file
       tags:
       - PDF
+  /process/split:
+    post:
+      consumes:
+      - multipart/form-data
+      description: This API splits the provided PDF file based on the specified split
+        mode and range
+      parameters:
+      - description: PDF file to be split
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Split mode (e.g., 'ranges', 'fixed_range', 'remove_pages')
+        in: formData
+        name: split_mode
+        required: true
+        type: string
+      - description: Page ranges when split_mode = 'ranges' (e.g., '1','5','1-5')
+        in: formData
+        name: ranges
+        type: string
+      - description: Remove pages when split_mode = 'remove_pages' (e.g., '1','5','1-5')
+        in: formData
+        name: remove_page
+        type: string
+      - description: Fixed range when split_mode = fixed_range (e.g., '2', '1')
+        in: formData
+        name: fixed_range
+        type: integer
+      produces:
+      - application/pdf
+      - ' application/zip'
+      responses:
+        "200":
+          description: Split PDF file
+          schema:
+            type: file
+        "400":
+          description: Invalid input or file type
+          schema:
+            $ref: '#/definitions/rest.ResponseError'
+        "500":
+          description: Failed to split PDF
+          schema:
+            $ref: '#/definitions/rest.ResponseError'
+      summary: Split a PDF file
+      tags:
+      - PDF
 swagger: "2.0"

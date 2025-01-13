@@ -44,6 +44,118 @@ func (_m *PdfService) CompressPdf(ctx context.Context, fileName string, file mul
 	return r0, r1
 }
 
+// PageCount provides a mock function with given fields: ctx, file
+func (_m *PdfService) PageCount(ctx context.Context, file multipart.File) (int, error) {
+	ret := _m.Called(ctx, file)
+
+	if len(ret) == 0 {
+		panic("no return value specified for PageCount")
+	}
+
+	var r0 int
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, multipart.File) (int, error)); ok {
+		return rf(ctx, file)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, multipart.File) int); ok {
+		r0 = rf(ctx, file)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, multipart.File) error); ok {
+		r1 = rf(ctx, file)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RemovePagesPdf provides a mock function with given fields: ctx, fileName, file, removePages, pageCount
+func (_m *PdfService) RemovePagesPdf(ctx context.Context, fileName string, file multipart.File, removePages []int, pageCount int) (domain.PdfFile, error) {
+	ret := _m.Called(ctx, fileName, file, removePages, pageCount)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RemovePagesPdf")
+	}
+
+	var r0 domain.PdfFile
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, multipart.File, []int, int) (domain.PdfFile, error)); ok {
+		return rf(ctx, fileName, file, removePages, pageCount)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, multipart.File, []int, int) domain.PdfFile); ok {
+		r0 = rf(ctx, fileName, file, removePages, pageCount)
+	} else {
+		r0 = ret.Get(0).(domain.PdfFile)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, multipart.File, []int, int) error); ok {
+		r1 = rf(ctx, fileName, file, removePages, pageCount)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SplitAndZipPdfByFixedRange provides a mock function with given fields: ctx, fileName, file, fra
+func (_m *PdfService) SplitAndZipPdfByFixedRange(ctx context.Context, fileName string, file multipart.File, fra [][]int) (domain.PdfFile, error) {
+	ret := _m.Called(ctx, fileName, file, fra)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SplitAndZipPdfByFixedRange")
+	}
+
+	var r0 domain.PdfFile
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, multipart.File, [][]int) (domain.PdfFile, error)); ok {
+		return rf(ctx, fileName, file, fra)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, multipart.File, [][]int) domain.PdfFile); ok {
+		r0 = rf(ctx, fileName, file, fra)
+	} else {
+		r0 = ret.Get(0).(domain.PdfFile)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, multipart.File, [][]int) error); ok {
+		r1 = rf(ctx, fileName, file, fra)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SplitPdfByRanges provides a mock function with given fields: ctx, fileName, file, ranges
+func (_m *PdfService) SplitPdfByRanges(ctx context.Context, fileName string, file multipart.File, ranges []int) (domain.PdfFile, error) {
+	ret := _m.Called(ctx, fileName, file, ranges)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SplitPdfByRanges")
+	}
+
+	var r0 domain.PdfFile
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, multipart.File, []int) (domain.PdfFile, error)); ok {
+		return rf(ctx, fileName, file, ranges)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, multipart.File, []int) domain.PdfFile); ok {
+		r0 = rf(ctx, fileName, file, ranges)
+	} else {
+		r0 = ret.Get(0).(domain.PdfFile)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, multipart.File, []int) error); ok {
+		r1 = rf(ctx, fileName, file, ranges)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // NewPdfService creates a new instance of PdfService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewPdfService(t interface {

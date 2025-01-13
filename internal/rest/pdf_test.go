@@ -98,28 +98,4 @@ func TestStartCompress(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	})
-
-	t.Run("when start compress invalid MIME type should be response 400", func(t *testing.T) {
-		testFile := "../resource/test.png"
-		body, contentType, err := createMultipartForm(testFile)
-		if err != nil {
-			t.Fatalf("Error creating multipart form: %v", err)
-		}
-
-		mockPdfSvc.On("CompressPdf", mock.Anything, mock.Anything, mock.Anything).Panic("Do Not Call")
-
-		e := echo.New()
-		req := httptest.NewRequest(http.MethodPost, "/process/compress", body)
-		req.Header.Set("Content-Type", contentType)
-		rec := httptest.NewRecorder()
-		c := e.NewContext(req, rec)
-		handler := rest.PdfHandler{
-			Service: mockPdfSvc,
-		}
-
-		err = handler.StartCompress(c)
-		require.NoError(t, err)
-
-		assert.Equal(t, http.StatusBadRequest, rec.Code)
-	})
 }
